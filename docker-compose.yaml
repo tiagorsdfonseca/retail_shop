@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  catalog-db:
+    image: mongo:6.0
+    container_name: catalog-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    volumes:
+      - mongo-data:/data/db
+    
+  #PostgreSQL for Order Service
+  order_db:
+    image: postgres:15-alpine
+    container_name: order-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: order_management
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  mongo-data:
+  postgres-data:

@@ -10,7 +10,7 @@ Feature: Process Payments
     Scenario: Payment declined due to insufficient funds
         Given an order has been created with a total amount of 120.00
         And the payment gateway rejects the transaction with code "INSUFFICIENT_FUNDS"
-        When teh payment is processed for this order
+        When the payment is processed for this order
         Then the Order Service should reject the payment
         And the order status should be updated to "PAYMENT_FAILED"
         And the customer should be prompted to provide an alternative payment method
@@ -32,7 +32,7 @@ Feature: Process Payments
     
     Scenario: Payment gateway returns an unexpected error
         Given an order has been created with a total amount of 59.99
-        And the payment gateway responds with an error code "UNKNOWN_ERROR"
+        And the payment gateway rejects the transaction with code "UNKNOWN_ERROR"
         When the payment is processed for this order
         Then the Order Service should mark the order as "PAYMENT_ERROR"
         And the error details should be logged in the SQL database for further investigation
