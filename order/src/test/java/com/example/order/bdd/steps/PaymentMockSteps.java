@@ -16,6 +16,7 @@ public class PaymentMockSteps {
         private PaymentClient paymentClient;
 
     // Given an order has been created with a total amount of 45.00
+    
     // And the payment gateway accepts the transaction with authorization "AUTH-12345"
     @Given("an order has been created with a total amount of {double}")
     @And("the payment gateway accepts the transaction with authorization {string}")
