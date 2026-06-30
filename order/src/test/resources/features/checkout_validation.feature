@@ -5,6 +5,7 @@ Feature: POS Checkout Validation
         When a customer buys 3 units of "PROD-SHIRT-L" through the Order Service
         Then the Order Service should approve the transaction with status "COMPLETED"
         And the Catalog Service for "PROD-SHIRT_L" should be updated to 17
+        And an order transaction event should be published to the streaming cluster
 
     Scenario: Unsucessful checkout due to empty stock
         Given the Catalog Service reports product "PROD-SHIRT-L" has 0 units in stock
