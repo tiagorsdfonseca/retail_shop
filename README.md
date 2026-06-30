@@ -2,9 +2,6 @@
 
 Repository Name: retail-shop-project
 
-[comment]: <> (![Build Status](https://github.com/tiagorsdfonseca/devops-capstone-project/actions/workflows/ci-build.yaml/badge.svg))
-
-
 
 # Retail Shop Template
 
