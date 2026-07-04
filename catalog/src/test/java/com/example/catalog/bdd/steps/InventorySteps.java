@@ -4,23 +4,23 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import com.example.catalog.bdd.CucumberSpringConfiguration;
 import com.example.catalog.model.Product;
 import com.example.catalog.repository.ProductRepository;
 
 import io.cucumber.java.Before;
-import io.cucumber.java.en.When;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 
 
-public class InventorySteps {
+public class InventorySteps extends CucumberSpringConfiguration {
     
     @Autowired
     private ProductRepository productRepository;
@@ -45,12 +45,12 @@ public class InventorySteps {
     @When("the manager restocks {int} units of product {string}")
     public void processInventoryUpdate(Integer incomingStock, String productId){
        // String payload = String.format("{\"productId\":\"%s\", \"quantity\":%d}", productId, incomingStock);
-        String url = "/products/" + PRODUCT_ID + "/restock";
+        String url = "/products/" + productId + "/restock";
         Map<String,Object> requestPayload = Map.of("quantity", incomingStock);
  
         //Triggers our actual InventoryController endpoint
         //response = restTemplate.postForEntity("/catalog", payload, String.class);
-        response = restTemplate.postForEntity("/catalog",requestPayload,String.class);
+        response = restTemplate.postForEntity(url,requestPayload,String.class);
     }
 
     @Then("the system should respond with {string}")
