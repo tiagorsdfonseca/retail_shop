@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)// Starts a WireMock server on port 8081 to act as a fake Catalog/payment APIs
 @AutoConfigureWireMock(port=8081)
 // Automatically spins up a background Kafka broker on a random test port
-@EmbeddedKafka(partitions=1, topics = { "order-events" })
+@EmbeddedKafka(partitions=1, topics = { "order-transactions" }, brokerProperties = { "listeners=PLAINTEXT://localhost:9092", "port=9092"})
 //@Import(TestClientConfig.class)
 @ActiveProfiles("test")
 @Import(MockClientConfig.class)

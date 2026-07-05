@@ -1,17 +1,16 @@
 package com.example.order.bdd.steps;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
 import io.cucumber.java.en.Given;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import org.mockito.Mockito;
-import com.example.order.client.CatalogClient;
-import com.example.order.client.CatalogResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.RestTemplate;
 
 public class CatalogMockSteps {
 
-    @Autowired
-    private CatalogClient catalogClient;
+    //@Autowired
+    //private CatalogClient catalogClient;
 
     @Given("the Catalog Service reports product {string} has {int} units in stock")
     public void the_catalog_service_products_has_units_in_stock(String productId, Integer stock){
@@ -24,12 +23,12 @@ public class CatalogMockSteps {
                     .withBody(String.format("{\"id\": \"%s\", \"stock\": %d}", productId, stock))));
 
         //Mockito bean fetching data from Wiremock stub
-        Mockito.when(catalogClient.getProductStock(productId))
+      /*   Mockito.when(catalogClient.getProductStock(productId))
             .thenAnswer(invocation -> {
                 //Connects directly to port 8081 (used by WireMock)
                 RestTemplate restTemplate = new RestTemplate();
                 //return restTemplate.getForObject("http://localhost:8081/productId");
                 return restTemplate.getForObject("http://localhost:8081/products/" + productId, CatalogResponse.class);
-            });
+            }); */
     }
 }
