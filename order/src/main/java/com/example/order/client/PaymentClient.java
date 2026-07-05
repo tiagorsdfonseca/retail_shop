@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 //@FeignClient(name = "payment-service", url = "${payment.service.url:http://localhost:8083}")
-@HttpExchange(url = "{catalog.service.url:http://localhost:8083}")
+@HttpExchange(url = "{payment.gateway.url:http://localhost:8083}")
 public interface PaymentClient {
 
     //@PostMapping("/payments")
