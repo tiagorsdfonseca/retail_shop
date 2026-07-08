@@ -17,4 +17,5 @@ public class Product{
     private String name;
     private Integer stock;
     private Double price;
+    private Boolean eligibleForPromo;
 }

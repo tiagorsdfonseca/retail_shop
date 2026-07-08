@@ -9,19 +9,26 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 //import org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+//import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 //import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 //import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 //import org.springframework.boot.autoconfigure.orm.jpa.HibernateAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import com.example.order.bdd.config.TestClientConfig;
+//import org.springframework.context.annotation.ComponentScan;
+//import org.springframework.context.annotation.FilterType;
+//import com.example.order.bdd.config.TestClientConfig;
 import org.springframework.context.annotation.Import;
 //import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+//import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.example.order.bdd.config.MockClientConfig;
 import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.resttestclient.TestRestTemplate;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @CucumberContextConfiguration
@@ -43,11 +50,28 @@ import org.springframework.test.context.ActiveProfiles;
 )*/
 public class CucumberSpringConfiguration {
 
-    @MockitoBean
+    /*@MockitoBean
     private CatalogClient catalogClient;
 
     @MockitoBean
-    private PaymentClient paymentClient;
-    
+    private PaymentClient paymentClient;*/
+
+    @Autowired
+    protected TestRestTemplate restTemplate;
+
+    //@Container
+   // @ServiceConnection //Bridges dynamic JDBC URL, username, and password into
+    static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine");
+
+    static {
+        postgresContainer.start();
+    }
+
+    @DynamicPropertySource
+    static void configureProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", postgresContainer::getUsername);
+        registry.add("spring.datasource.password", postgresContainer::getPassword);
+    }
 }
 
