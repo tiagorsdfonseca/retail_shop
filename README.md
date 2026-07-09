@@ -2,6 +2,9 @@
 
 Repository Name: retail-shop-project
 
+![Build Status Catalog CI](https://github.com/tiagorsdfonseca/retail_shop/actions/workflows/catalog-ci.yaml/badge.svg)
+![Build Status Order CI](https://github.com/tiagorsdfonseca/retail_shop/actions/workflows/order-ci.yaml/badge.svg)
+
 
 # Retail Shop Template
 
@@ -58,6 +61,8 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   ├── java.com.example.catalog/
 |   |   ├── CatalogApplication.java
 |   |   ├── controller/
+|   |   |  ├── CatalogController.java
+|   |   |  ├── PromotionController.java 
 |   |   ├── model/
 |   |   |   ├── Product.java
 |   |   ├── repository/
@@ -92,12 +97,15 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   |   ├── CatalogResponse.java
 |   |   |   ├── PaymentClient.java
 |   |   ├── controller/
+|   |   |  ├── OrderController.java
 |   |   ├── dto/
 |   |   |   ├── OrderRequest.java
 |   |   ├── event/
 |   |   |   ├── OrderCreatedEvent.java
 |   |   ├── model/
+|   |   |  ├── Order.java
 |   |   ├── repository/
+|   |   |  ├── OrderRepository.java
 |   |   ├── service/
 |   |   |   ├── OrderService.java
 |   ├── resources/
