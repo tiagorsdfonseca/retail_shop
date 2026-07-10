@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   catalog-db:
     image: mongo:6.0
@@ -11,6 +9,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - mongo-data:/data/db
+    networks:
+      - retail-network
     
   #PostgreSQL for Order Service
   order_db:
@@ -24,6 +24,63 @@ services:
       POSTGRES_DB: order_management
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - retail-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d order_management"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: retail-kafka
+    ports:
+      - "9002:9002"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT, PLAINTEXT:PLAINTEXT, PLAINTEXT_HOST:PLAINTEXT '
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://kafka:29092, PLAINTEXT_HOST://localhost:9092'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: 'broker, controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:29092,CONTROLLER:0.0.0.0:29093, PLAINTEXT_HOST://0.0.0.0:9092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAME: 'CONTROLLER'
+      KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+      CLUSTER_ID: 'MkU3OEVBNTcwNT JENDM2QK'
+    networks:
+      - retail-network
+  
+  order-service:
+    build:
+      context: ./order
+      dockerfile: Dockerfile
+    container_name: order-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order_db:5432/order_management
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+    depends_on:
+      order_db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    networks:
+      - retail-network
+
 volumes:
   mongo-data:
   postgres-data:
+
+networks:
+  retail-network:
+    driver: bridge
+

@@ -30,6 +30,9 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 @CucumberContextConfiguration
 // Spins up the application on a random port for integration testing
@@ -63,8 +66,11 @@ public class CucumberSpringConfiguration {
    // @ServiceConnection //Bridges dynamic JDBC URL, username, and password into
     static final PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:15-alpine");
 
+    static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.0"));
+
     static {
         postgresContainer.start();
+        kafkaContainer.start();
     }
 
     @DynamicPropertySource
@@ -72,6 +78,8 @@ public class CucumberSpringConfiguration {
         registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgresContainer::getUsername);
         registry.add("spring.datasource.password", postgresContainer::getPassword);
+   
+        registry.add("spring.kafka.bootstrap-servers",kafkaContainer::getBootstrapServers);
     }
 }
 
