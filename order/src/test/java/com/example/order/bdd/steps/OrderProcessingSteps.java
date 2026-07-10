@@ -1,31 +1,27 @@
 package com.example.order.bdd.steps;
 
+import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
+
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
-
-import java.time.Duration;
-
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
-import java.util.Map;
-import java.util.Collections;
+import com.example.order.bdd.KafkaTestConsumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 public class OrderProcessingSteps{
 
@@ -34,6 +30,9 @@ public class OrderProcessingSteps{
 
     @Autowired
     private ConsumerFactory<String, Object> consumerFactory;
+
+    @Autowired
+    private KafkaTestConsumer kafkaTestConsumer;
 
     private ResponseEntity<String> response;
 
@@ -86,6 +85,45 @@ public class OrderProcessingSteps{
         assertTrue(singleRecord.value().toString().contains("APPROVED"), "Kafka event state should be set to APPROVED");
     
         consumer.close();
+    }
+
+    @And("a Kafka message should be emmited to {string}")
+    public void verifyKafkaMessageIsEmitted(String topic) throws InterruptedException{
+        //Wait up to 5 seconds for the controller to assynchronously publish to the broker
+        ConsumerRecord<String, Map<String, Object>> receivedRecord = kafkaTestConsumer.pollMessage(5);
+
+        // Assert that we sucessfully captured a broadcasted event
+        assertNotNull(receivedRecord, "Failed to capture a Kafka event on topic:" + topic);
+
+        //Extract the JSON payload maps
+        Map<String, Object> payload = receivedRecord.value();
+
+        //Validate that the event data accurately matches the approved transaction
+        assertNotNull(payload.get("orderId"));
+        assertEquals("APPROVED", payload.get("status"));
+
+        //Reset the queue to keep any subsequent scenario runs isolated
+        kafkaTestConsumer.clear();
+
+
+    }
+
+    @And("no Kafka message should be emmited")
+    public void verifyNoKafkaMessageIsEmitted(){
+        //Wait briefly to confirm nothing rogue is published assynchronously
+        try {
+            Thread.sleep(1500);
+        
+        //Poll the queue
+        ConsumerRecord<String, Map<String, Object>> receiveRecord = kafkaTestConsumer.pollMessage(1);
+
+        // Assert that absolutely nothing was caught by our listener
+        assertNull(receiveRecord, "An unexpected Kafka event was detected on the streaming cluster!");
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
 
