@@ -37,7 +37,15 @@ public class InventorySteps extends CucumberSpringConfiguration {
         //Automatically clear out old test runs and inject a fresh base item
         productRepository.deleteAll();
 
-        Product defaultProduct = new Product (PRODUCT_ID, "Classic Blue T-Shirt", 10, 19.99,false);
+        //Product defaultProduct = new Product (PRODUCT_ID, "Classic Blue T-Shirt", 10, 19.99,false);
+        Product defaultProduct = Product.builder()
+                .id("prod-1")
+                .name("Classic Blue Shirt")
+                .stock(10)
+                .price(29.99)
+                .eligibleForPromo(true)
+                .build();
+
         productRepository.save(defaultProduct);
     }
 

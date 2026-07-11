@@ -19,7 +19,12 @@ public class OrderTransactionConsumer {
 
         System.out.println("===== DOWNSTREAM CONSUMER TRIPPED =====");
         System.out.println("Processing approved order ID: "+ event.getOrderId());
-        System.out.println("Fulfilling " + event.getQuantity() + " units for Product: "+ event.getProductId());
+        System.out.println("Total Basket Value: $" + event.getTotalAmount());
+
+        for(OrderCreatedEvent.ItemEvent item : event.getItems()){
+            System.out.println(" -> Fulfilling " + item.getQuantity() + " units for Product ID: "+ item.getProductId());
+        }
+        // System.out.println("Fulfilling " + event.getQuantity() + " units for Product: "+ event.getProductId());
         System.out.println("================================");
     }
     

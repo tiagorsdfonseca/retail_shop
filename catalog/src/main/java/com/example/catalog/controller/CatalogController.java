@@ -2,6 +2,7 @@ package com.example.catalog.controller;
 
 import com.example.catalog.model.Product;
 import com.example.catalog.repository.ProductRepository;
+import com.example.catalog.service.CatalogService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,8 +18,8 @@ import java.util.Map;
 @RequestMapping("/products")
 public class CatalogController {
 
-    @Autowired
-    private ProductRepository productRepository;
+   // @Autowired
+   // private ProductRepository productRepository;
     
    /*  @GetMapping("/{sku}")
     public ResponseEntity<Product> getProductBySku(@PathVariable("sku") String sku ){
@@ -32,11 +33,17 @@ public class CatalogController {
         return ResponseEntity.ok(mockProduct);
     }*/
 
+   private final CatalogService catalogService;
+
+   public CatalogController(CatalogService catalogService){
+    this.catalogService = catalogService;
+   }
+
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable("productId") String productId){
 
-        return productRepository.findById(productId)
-            .map(product -> ResponseEntity.ok(product))
+        return catalogService.getProductById(productId)
+            .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
     }
 
@@ -51,21 +58,16 @@ public class CatalogController {
                 return ResponseEntity.badRequest().body("Invalid stock increment");
             }
 
-            //Fetch the document from MongoDB
-            Product product = productRepository.findById(productId)
-                .orElse(null);
+            return catalogService.restockProduct(productId, quantity)
+                    .map(updatedProduct -> ResponseEntity.ok("Stock updated sucessfully"))
+                    .orElse(ResponseEntity.notFound().build());
 
-            if(product == null){
-                return ResponseEntity.notFound().build();
-            }
+           }
 
-            // Perform the real business calculation
-            product.setStock(product.getStock() + quantity);
-
-            //Persist the updated state back into the collection
-            productRepository.save(product);
-
-            return ResponseEntity.ok("Stock updated sucessfully");
+    //Quick helper endpoint to create a product
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product){
+        return ResponseEntity.ok(catalogService.saveProduct(product));
     }
 
 }

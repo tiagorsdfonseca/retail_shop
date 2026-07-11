@@ -2,28 +2,47 @@ package com.example.order.controller;
 
 import java.util.Map;
 
-import com.example.order.client.CatalogClient;
-import com.example.order.client.PaymentClient;
-import com.example.order.client.CatalogResponse;
-import com.example.order.dto.OrderRequest;
-import com.example.order.repository.OrderRepository;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 
-
+import com.example.order.dto.OrderRequest;
 import com.example.order.model.Order;
+import com.example.order.service.OrderService;
 
-import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 
 
+@RestController
+@RequestMapping("/orders")
+@RequiredArgsConstructor
+public class OrderController {
 
+    private final OrderService orderService;
+
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody OrderRequest request){
+        try{
+            Order completedOrder = orderService.createOrder(request);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                "orderId", completedOrder.getId(),
+                "status", completedOrder.getStatus(),
+                "totalAmount", completedOrder.getTotalAmount()
+            ));
+        
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(Map.of("status", "REJECTED", "reason", e.getMessage()));
+        }catch (IllegalStateException e){
+            return ResponseEntity.badRequest().body(Map.of("status", "REJECTED","error", e.getMessage() ));
+        }
+    }
+}
+
+/* 
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -98,3 +117,4 @@ public class OrderController {
     }
     
 }
+    */
