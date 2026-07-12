@@ -12,11 +12,14 @@ Repository Name: retail-shop-project
 [![Java 21](https://img.shields.io/badge/Java-21-blue.svg)](https://events.development.outlook.com)
 [![Spring Boot 4](https://img.shields.io/badge/Spring_Boot-4.0.6-6DB33F?style=flat&logo=spring&logoColor=white)](https://shields.io/)
 
-This repository contains the microservices code for the **Retail Shop** project. The application replicates a e-distributed e-commerce architecture focused on catalog inventory, checkout processing, and payment operations using modern Spring native capabilities.
+This repository contains the microservices engine for the **Retail Shop** project. The ecosystem demonstrates a resilitent, distributed e-commerce architecture showcasing polyglot persistence, with native Spring HTTP interfaces, assynchronous event streaming, and automated CI/CD pipeline structures.
 
-## Usage
+## Core Architecture Highlights
+* **Polyglot Persistence:** Optimized data layers using **MongoDB** for highly fluid, polymorphic catalog schemas alongside **PostgreSQL** for strict, ACID-compliant transactional order workflows.
+* **Modern Inter-Service Proxies:** Synchronous inter-service communication utilizes natives Spring 6 `@HttpExchange` client factories built over `RestClient`.
+* **Asynchronous Event-Driven:** Decoupled architecture integrating **Apache Kafka** templates optimized for structured transactional event emission ('OrderCreatedEvent').
 
-
+---
 
 ## Development Environment
 
@@ -41,22 +44,35 @@ mvn -version
 mvn clean install
 ```
 
-
-
 ### Execute Test Suites
 
 ```bash
 mvn clean test
 ```
 
+## Build & Package Modules Locally
+```bash
+mvn clean package -DskipTests
+```
+
+## Orchestrate the Cluster via Docker Compose
+
+```bash
+docker compose down
+docker compose up --build
+```
 
 ## Project layout
 
-The code for this application is divided in two main sections: `catalog` and `order`. The first one focuses on the operations which are related with inventory management and promotional price management. On the other hand, the `order` section deals with the payment mechanisms and checkout validation. The code is presented in the `service` package of each section. All of the tests are in the `tests` folder. There also Behavioral-Driven Development features implemented in Cucumber present on the `resources/features` folder.
+The codebase is split into two autonomous microservices: **catalog** and **order**.
+* **Catalog Service:** Manages inventory definitions, schema-agnostic product specifications, and promotional logic backed by MongoDB.
+* **Order Service:** Evaluates customer transaction schemas, authenticates external financial gateways, streams transactional logs via Kafka, and records audit history inside PostgreSQL.
 
 ## Catalog Architecture
 
-```src/
+```
+Dockerfile
+src/
 ├── main/
 |   ├── java.com.example.catalog/
 |   |   ├── CatalogApplication.java
@@ -67,8 +83,11 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   |   ├── Product.java
 |   |   ├── repository/
 |   |   |   ├── ProductRepository.java
+|   |   ├── service/
+|   |   |   ├── CatalogService.java
 |   ├── resources/
 |   |   ├── application.properties
+|   |   ├── application-prod.properties
 |   |   ├── bdd/
 |   |   |   ├── steps/
 |   |   |   |   ├── inventory_management.feature
@@ -84,11 +103,14 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   |   ├── CucumberTestRunner.java
 |   ├── resources
 |   |   ├── cucumber.properties 
+|   |   ├── application-test.properties 
 ```
 
 ## Order Architecture
 
-```src/
+```
+Dockerfile
+src/
 ├── main/
 |   ├── java.com.example.order/
 |   |   ├── OrderApplication.java
@@ -96,14 +118,21 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   |   ├── CatalogClient.java
 |   |   |   ├── CatalogResponse.java
 |   |   |   ├── PaymentClient.java
+|   |   ├── config/
+|   |   |   ├── ClientConfig.java
+|   |   |   ├── KafkaConfig.java
+|   |   ├── consumer/
+|   |   |   ├── OrderTransactionConsumer.java
 |   |   ├── controller/
 |   |   |  ├── OrderController.java
 |   |   ├── dto/
+|   |   |   ├── OrderItemRequest.java
 |   |   |   ├── OrderRequest.java
 |   |   ├── event/
 |   |   |   ├── OrderCreatedEvent.java
 |   |   ├── model/
 |   |   |  ├── Order.java
+|   |   |  ├── OrderItem.java
 |   |   ├── repository/
 |   |   |  ├── OrderRepository.java
 |   |   ├── service/
@@ -115,9 +144,7 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   ├── OrderApplicationTests.java
 |   |   ├── bdd/
 |   |   |   ├── config/
-|   |   |   |   ├── ClientConfig.java
 |   |   |   |   ├── MockClientConfig.java
-|   |   |   |   ├── TestClientConfig.java
 |   |   |   ├── steps/
 |   |   |   |   ├── CatalogMockSteps.java
 |   |   |   |   ├── OrderProcessingSteps.java
@@ -125,6 +152,7 @@ The code for this application is divided in two main sections: `catalog` and `or
 |   |   |   ├── CucumberSpringConfiguration.java
 |   |   |   ├── CucumberTestRunner.java
 |   ├── resources/
+|   |   ├── application-test.properties
 |   |   ├── features/
 |   |   |   ├── checkout_validation.feature
 |   |   |   ├── order_history_and_compliance.feature
@@ -133,6 +161,8 @@ The code for this application is divided in two main sections: `catalog` and `or
 
 ## Author
 
-[Tiago Fonseca]
+[Tiago Fonseca](https://github.com/tiagorsdfonseca) 
 
 ## License
+
+License under the Apache License. See [LICENSE](LICENSE).
