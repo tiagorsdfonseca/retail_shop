@@ -1,4 +1,4 @@
-package com.example.order.bdd.config;
+package com.example.order.config;
 
 
 import com.example.order.client.CatalogClient;

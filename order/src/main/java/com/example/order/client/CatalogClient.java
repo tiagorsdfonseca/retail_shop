@@ -6,12 +6,12 @@ import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 
 //@FeignClient(name = "catalog-service", url="${catalog.service.url:http://localhost:8081}")
-@HttpExchange(url = "{catalog.service.url:http://localhost:8081}")
+@HttpExchange(url = "/products")
 public interface CatalogClient {
 
     //@GetMapping("/products/{productId}")
      
-    @GetExchange("/products/{productId}")
+    @GetExchange("/{productId}")
     CatalogResponse getProductStock(@PathVariable("productId") String productId);
 
     

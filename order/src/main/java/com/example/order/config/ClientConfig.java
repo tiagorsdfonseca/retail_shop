@@ -1,13 +1,14 @@
-package com.example.order.bdd.config;
+package com.example.order.config;
 
-import com.example.order.client.CatalogClient;
-import com.example.order.client.PaymentClient;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+
+import com.example.order.client.CatalogClient;
+import com.example.order.client.PaymentClient;
 
 @Configuration
 public class ClientConfig {
@@ -15,7 +16,7 @@ public class ClientConfig {
     @Value("${catalog.service.url:http://localhost:8081}")
     private String catalogServiceUrl;
 
-    @Value("${payment.gateway.url:http://localhost:8081}")
+    @Value("${payment.gateway.url:http://localhost:8084}")
     private String paymentUrl;
 
     @Bean

@@ -17,6 +17,8 @@ import com.example.order.event.OrderCreatedEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,7 @@ public class OrderService {
     private final CatalogClient catalogClient;
     private final PaymentClient paymentClient;
     private final OrderRepository orderRepository;
+    @Autowired
     private final KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate; //Injected messaging broker tool
 
     @Transactional

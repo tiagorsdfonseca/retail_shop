@@ -2,6 +2,8 @@ package com.example.order.bdd;
 
 import com.example.order.client.CatalogClient;
 import com.example.order.client.PaymentClient;
+import com.example.order.config.MockClientConfig;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -15,11 +17,7 @@ import org.springframework.kafka.test.context.EmbeddedKafka;
 //import org.springframework.boot.autoconfigure.orm.jpa.HibernateAutoConfiguration;
 //import org.springframework.context.annotation.ComponentScan;
 //import org.springframework.context.annotation.FilterType;
-//import com.example.order.bdd.config.TestClientConfig;
 import org.springframework.context.annotation.Import;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import com.example.order.bdd.config.MockClientConfig;
 import org.springframework.test.context.ActiveProfiles;
 //import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.boot.test.context.SpringBootTest;
