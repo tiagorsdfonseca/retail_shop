@@ -13,6 +13,20 @@ on:
 jobs:
   build-order:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: order_management
+          POSTGRES_USER: admin
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -20,7 +34,13 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-      - name: Test Catalog
+      - name: Test Order Service
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/order_management
+          SPRING_DATASOURCE_USERNAME: admin
+          SPRING_DATASOURCE_PASSWORD: password
+          SPRING_KAFKA_BOOTSTRAP_SERVERS: localhost:9092
+          CATALOG_SERVICE_URL: http://localhost:8082
         run: |
           cd order
           mvn clean test
