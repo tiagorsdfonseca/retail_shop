@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: retail-config
+  namespace: default
+data:
+  POSTGRES_DB: order_management
+  POSTGRES_USER: admin
+  POSTGRES_HOST: order-db-service
+
+  MONGO_USER: admin
+  MONGO_HOST: catalog-db-service
+  MONGO_DB: catalog-db
+
+  KAFKA_BOOTSTRAP_SERVERS: kafka-service:29092
