@@ -35,6 +35,11 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: retail-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: retail-config
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:

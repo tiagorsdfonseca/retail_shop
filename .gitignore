@@ -1,0 +1,3 @@
+#Kubernetes Secrets
+k8s/infra/secrets.yaml
+k8s/infra/.env
